@@ -13,7 +13,7 @@ from hypercorn.config import Config
 from hypercorn.asyncio import serve
 
 config = Config()
-port = int(os.getenv("PORT", "8000"))
+port = int(os.getenv("PORT", "80"))
 config.bind = [f"0.0.0.0:{port}"]
 asyncio.run(serve(app, config))
 
