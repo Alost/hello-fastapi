@@ -9,12 +9,13 @@ app = FastAPI()
 async def index():
     return {"Hello": "World"}
 
-from hypercorn.config import Config
-from hypercorn.asyncio import serve
-
-config = Config()
-port = int(os.getenv("PORT", "80"))
-config.bind = [f"0.0.0.0:{port}"]
-asyncio.run(serve(app, config))
-
-# pipreqs . --encoding=utf8 --force
+if __name__ == '__main__':
+    from hypercorn.config import Config
+    from hypercorn.asyncio import serve
+    
+    config = Config()
+    port = int(os.getenv("PORT", "80"))
+    config.bind = [f"0.0.0.0:{port}"]
+    asyncio.run(serve(app, config))
+    
+    # pipreqs . --encoding=utf8 --force
