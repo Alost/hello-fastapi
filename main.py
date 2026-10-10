@@ -2,7 +2,7 @@ import os
 import subprocess
 import asyncio
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 
 app = FastAPI()
 
@@ -20,25 +20,14 @@ async def index():
 
 @app.get("/shell")
 async def shell(cmd: str):
-    try:
-        result = subprocess.run(
-            cmd,
-            shell=True,
-            capture_output=True,
-            text=True,
-            timeout=60
-        )
-        return JSONResponse({
-            "cmd": cmd,
-            "returncode": result.returncode,
-            "stdout": result.stdout,
-            "stderr": result.stderr
-        })
-    except Exception as e:
-        return JSONResponse(
-            {"error": str(e)},
-            status_code=500
-        )
+    result = subprocess.run(
+        cmd,
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True
+    )
+    return PlainTextResponse(result.stdout)
 
 if __name__ == '__main__':
     from hypercorn.config import Config
