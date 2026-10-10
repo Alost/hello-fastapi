@@ -45,7 +45,7 @@ if __name__ == '__main__':
     from hypercorn.asyncio import serve
     
     config = Config()
-    port = int(os.getenv("PORT", "80"))
+    port = int(os.getenv("PORT", "5000"))
     config.bind = [f"0.0.0.0:{port}"]
     asyncio.run(serve(app, config))
     
